@@ -39,8 +39,9 @@ module Roda::RodaPlugins
           halt [400, auth_opts[:bad_request_headers].call(auth_opts), []]
         end
 
-        if authenticator.call(*auth.credentials)
+        if (result = authenticator.call(*auth.credentials))
           env['REMOTE_USER'] = auth.username
+          result
         else
           auth_opts[:unauthorized].call(self) if auth_opts[:unauthorized]
           halt [401, auth_opts[:unauthorized_headers].call(auth_opts), []]
